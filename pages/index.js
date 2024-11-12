@@ -7,6 +7,7 @@
  *  Name: Alec Josef Serrano
  *  Student ID: 133592238
  *  Date: November 11, 2024
+ *  Vercel Link: https://web-422-assignment-4-navy.vercel.app/
  ********************************************************************************/
 
 import { Image, Row, Col, Card } from 'react-bootstrap';
