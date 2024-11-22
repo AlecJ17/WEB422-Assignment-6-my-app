@@ -1,12 +1,26 @@
 import useSWR from 'swr';
-import { Card } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
 import Error from 'next/error';
+import { useState } from 'react';
+import { useAtom } from 'jotai';
+import { favouritesAtom } from '../store';  // Make sure the path matches your project structure
 
 export default function ArtworkCardDetail({ objectID }) {
     const { data, error } = useSWR(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+    const [favouritesList, setFavouritesList] = useAtom(favouritesAtom);
+    const [showAdded, setShowAdded] = useState(favouritesList.includes(objectID));
 
     if (error) return <Error statusCode={404} />;
     if (!data) return null;
+
+    const toggleFavourite = () => {
+        if (showAdded) {
+            setFavouritesList(favouritesList.filter(id => id !== objectID));
+        } else {
+            setFavouritesList([...favouritesList, objectID]);
+        }
+        setShowAdded(!showAdded);
+    };
 
     const imageSrc = data.primaryImage || 'https://via.placeholder.com/375x375.png?text=[+Not+Available+]';
     const title = data.title || 'N/A';
@@ -37,7 +51,13 @@ export default function ArtworkCardDetail({ objectID }) {
                     )}
                     <br />
                     <strong>Credit Line:</strong> {creditLine} <br />
-                    <strong>Dimensions:</strong> {dimensions}
+                    <strong>Dimensions:</strong> {dimensions} <br /> <br />
+                    <Button
+                        variant={showAdded ? "primary" : "outline-primary"}
+                        onClick={toggleFavourite}
+                    >
+                        {showAdded ? "- Remove from Favourites" : "+ Add to Favourites"}
+                    </Button>
                 </Card.Text>
             </Card.Body>
         </Card>
