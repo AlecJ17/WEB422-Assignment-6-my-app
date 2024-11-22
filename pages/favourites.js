@@ -20,8 +20,8 @@ export default function Favourites() {
                     <Col>
                         <Card>
                             <Card.Body>
-                                <Card.Title>Nothing Here</Card.Title>
-                                <Card.Text>Try adding some new artwork to your favourites list.</Card.Text>
+                                <Card.Title><h4>Nothing Here</h4></Card.Title>
+                                <Card.Text>Try adding some new artwork to the list.</Card.Text>
                             </Card.Body>
                         </Card>
                     </Col>

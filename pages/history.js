@@ -2,7 +2,8 @@ import { useAtom } from 'jotai';
 import { searchHistoryAtom } from '../store';
 import { useRouter } from 'next/router';
 import { Card, ListGroup, Button } from 'react-bootstrap';
-import styles from '@/styles/History.module.css'; // Import the CSS module
+import styles from '@/styles/History.module.css';
+import React from "react"; // Import the CSS module
 
 export default function History() {
     const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
@@ -34,11 +35,11 @@ export default function History() {
 
     return (
         <div className="container mt-4">
-            <h1>Search History</h1>
             {parsedHistory.length === 0 ? (
                 <Card>
                     <Card.Body>
-                        <Card.Text>Nothing Here. Try searching for some artwork.</Card.Text>
+                        <Card.Title><h4>Nothing Here</h4></Card.Title>
+                        <Card.Text>Try searching for some artwork.</Card.Text>
                     </Card.Body>
                 </Card>
             ) : (
