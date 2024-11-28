@@ -40,3 +40,4 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 # WEB422-Assignment-4
 # WEB422-Assignment-5
+# WEB422-Assignment-6-my-app
