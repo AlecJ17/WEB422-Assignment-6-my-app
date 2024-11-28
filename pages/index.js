@@ -7,7 +7,7 @@
  *  Name: Alec Josef Serrano
  *  Student ID: 133592238
  *  Date: November 27, 2024
- *  Vercel Link: https://web-422-assignment-5-kbb7.vercel.app/
+ *  Vercel Link: https://web-422-assignment-6-my-app.vercel.app/
  ********************************************************************************/
 
 import { Image, Row, Col, Card } from 'react-bootstrap';
