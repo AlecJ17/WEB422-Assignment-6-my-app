@@ -3,13 +3,13 @@ import { searchHistoryAtom } from '../store';
 import { useRouter } from 'next/router';
 import { Card, ListGroup, Button } from 'react-bootstrap';
 import styles from '@/styles/History.module.css';
-import React from "react"; // Import the CSS module
+import { removeFromHistory } from '../lib/userData';
 
 export default function History() {
     const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
     const router = useRouter();
 
-    // Parse the search history into an array of objects
+    if (!searchHistory) return null;
     const parsedHistory = [];
     searchHistory.forEach((h) => {
         const params = new URLSearchParams(h);
@@ -17,20 +17,14 @@ export default function History() {
         parsedHistory.push(Object.fromEntries(entries));
     });
 
-    // Navigate to the selected search query
     const historyClicked = (e, index) => {
         e.stopPropagation();
         router.push(`/artwork?${searchHistory[index]}`);
     };
 
-    // Remove a specific search query from the history
-    const removeHistoryClicked = (e, index) => {
+    const removeHistoryClicked = async (e, index) => {
         e.stopPropagation();
-        setSearchHistory((current) => {
-            const updatedHistory = [...current];
-            updatedHistory.splice(index, 1);
-            return updatedHistory;
-        });
+        setSearchHistory(await removeFromHistory(searchHistory[index])); // Update the atom with the new history
     };
 
     return (

@@ -1,12 +1,12 @@
 /*********************************************************************************
- *  WEB422 – Assignment 5
+ *  WEB422 – Assignment 6
  *  I declare that this assignment is my own work in accordance with Seneca Academic Policy.
  *  No part of this assignment has been copied manually or electronically from any other source
  *  (including web sites) or distributed to other students.
  *
  *  Name: Alec Josef Serrano
  *  Student ID: 133592238
- *  Date: November 21, 2024
+ *  Date: November 27, 2024
  *  Vercel Link: https://web-422-assignment-5-kbb7.vercel.app/
  ********************************************************************************/
 
