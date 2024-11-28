@@ -4,6 +4,8 @@ import { useAtom } from 'jotai';
 import { favouritesAtom, searchHistoryAtom } from '@/store';
 import { getFavourites, getHistory } from '@/lib/userData';
 
+
+
 const PUBLIC_PATHS = ['/register', '/login'];
 
 export default function RouteGuard({ children }) {
@@ -38,7 +40,7 @@ export default function RouteGuard({ children }) {
         };
 
         updateAtoms();
-    }, [router.pathname]);
+    }, [router.pathname, setFavourites, setSearchHistory]);
 
     if (loading) {
         return <div>Loading...</div>;
