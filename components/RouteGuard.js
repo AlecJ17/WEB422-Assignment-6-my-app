@@ -1,54 +1,47 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useAtom } from 'jotai';
-import { favouritesAtom, searchHistoryAtom } from '@/store';
-import { getFavourites, getHistory } from '@/lib/userData';
+import { readToken } from '@/lib/authenticate';
 
+const PUBLIC_PATHS = ['/login', '/', '/_error', '/register'];
 
-
-const PUBLIC_PATHS = ['/register', '/login'];
-
-export default function RouteGuard({ children }) {
+export default function RouteGuard(props) {
     const router = useRouter();
-    const [favourites, setFavourites] = useAtom(favouritesAtom);
-    const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [authorized, setAuthorized] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        setIsLoggedIn(!!token);  // Update login state
+        authCheck(router.pathname);
 
-        if (!token && !PUBLIC_PATHS.includes(router.pathname)) {
-            router.push('/login');
+        const handleRouteChange = (url) => {
+            authCheck(url);
+        };
+
+        router.events.on('routeChangeComplete', handleRouteChange);
+
+        return () => {
+            router.events.off('routeChangeComplete', handleRouteChange);
+        };
+    }, [router]);
+
+    function authCheck(url) {
+        const path = url.split('?')[0];
+
+        if (PUBLIC_PATHS.includes(path)) {
+            setAuthorized(true);
             return;
         }
 
-        const updateAtoms = async () => {
-            try {
-                const favs = await getFavourites();
-                const history = await getHistory();
-                setFavourites(favs);
-                setSearchHistory(history);
-            } catch (error) {
-                console.error("Error fetching favourites or history:", error);
-                setError("Failed to load your data. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        updateAtoms();
-    }, [router.pathname, setFavourites, setSearchHistory]);
-
-    if (loading) {
-        return <div>Loading...</div>;
+        const token = readToken();
+        if (token) {
+            setAuthorized(true);
+        } else {
+            setAuthorized(false);
+            router.push('/login');
+        }
     }
 
-    if (error) {
-        return <div>{error}</div>;
-    }
-
-    return <>{children}</>;
+    return (
+        <>
+            {authorized ? props.children : null}
+        </>
+    );
 }
