@@ -1,47 +1,53 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { readToken } from '@/lib/authenticate';
+import { useAtom } from 'jotai';
+import { favouritesAtom, searchHistoryAtom } from '../store';
+import { getFavourites, getHistory } from '../lib/userData';
 
-const PUBLIC_PATHS = ['/login', '/', '/_error', '/register'];
+const PUBLIC_PATHS = ['/register', '/login'];
 
-export default function RouteGuard(props) {
+export default function RouteGuard({ children }) {
     const router = useRouter();
-    const [authorized, setAuthorized] = useState(false);
+    const [favourites, setFavourites] = useAtom(favouritesAtom);
+    const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
     useEffect(() => {
-        authCheck(router.pathname);
+        const token = localStorage.getItem('token');
+        setIsLoggedIn(!!token);
 
-        const handleRouteChange = (url) => {
-            authCheck(url);
-        };
-
-        router.events.on('routeChangeComplete', handleRouteChange);
-
-        return () => {
-            router.events.off('routeChangeComplete', handleRouteChange);
-        };
-    }, [router]);
-
-    function authCheck(url) {
-        const path = url.split('?')[0];
-
-        if (PUBLIC_PATHS.includes(path)) {
-            setAuthorized(true);
+        if (!token && !PUBLIC_PATHS.includes(router.pathname)) {
+            router.push('/login');
             return;
         }
 
-        const token = readToken();
-        if (token) {
-            setAuthorized(true);
-        } else {
-            setAuthorized(false);
-            router.push('/login');
-        }
+        const updateAtoms = async () => {
+            try {
+                const favs = await getFavourites();
+                const history = await getHistory();
+                setFavourites(favs);
+                setSearchHistory(history);
+            } catch (error) {
+                console.error("Error fetching favourites or history:", error);
+                setError("Failed to load your data. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        updateAtoms();
+    }, [router.pathname]);
+
+    if (loading) {
+        return <div>Loading...</div>;
     }
 
-    return (
-        <>
-            {authorized ? props.children : null}
-        </>
-    );
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    return <>{children}</>;
 }
